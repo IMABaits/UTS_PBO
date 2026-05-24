@@ -32,6 +32,7 @@ public class User extends javax.swing.JFrame {
         panel1 = new java.awt.Panel();
         panel2 = new java.awt.Panel();
         panel3 = new java.awt.Panel();
+        panel4 = new java.awt.Panel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
@@ -59,7 +60,7 @@ public class User extends javax.swing.JFrame {
             .addGap(0, 501, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Jadwal", panel1);
+        jTabbedPane1.addTab("Dashboard", panel1);
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -72,7 +73,7 @@ public class User extends javax.swing.JFrame {
             .addGap(0, 501, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Riwayat", panel2);
+        jTabbedPane1.addTab("Jadwal", panel2);
 
         javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
         panel3.setLayout(panel3Layout);
@@ -85,7 +86,20 @@ public class User extends javax.swing.JFrame {
             .addGap(0, 501, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("QR Code", panel3);
+        jTabbedPane1.addTab("Riwayat", panel3);
+
+        javax.swing.GroupLayout panel4Layout = new javax.swing.GroupLayout(panel4);
+        panel4.setLayout(panel4Layout);
+        panel4Layout.setHorizontalGroup(
+            panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 693, Short.MAX_VALUE)
+        );
+        panel4Layout.setVerticalGroup(
+            panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 501, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Ticket", panel4);
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel1.setText("Halo,  <Name>");
@@ -163,5 +177,6 @@ public class User extends javax.swing.JFrame {
     private java.awt.Panel panel1;
     private java.awt.Panel panel2;
     private java.awt.Panel panel3;
+    private java.awt.Panel panel4;
     // End of variables declaration//GEN-END:variables
 }
