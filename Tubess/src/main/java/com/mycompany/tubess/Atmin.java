@@ -4,21 +4,126 @@
  * and open the template in the editor.
  */
 package com.mycompany.tubess;
-
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import java.sql.Connection;
+import com.mycompany.tubess.Koneksi;
 /**
  *
  * @author ASUS Vivobook
  */
 public class Atmin extends javax.swing.JFrame {
-
+String id_film_terpilih = "";
     /**
      * Creates new form Atmin
      */
-   
     public Atmin() {
         initComponents();
+        tampilkanDataTabel();
+        loadFilmToComboBox();
     }
 
+    private void tampilkanDataTabel() {
+        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel();
+        model.addColumn("No");
+        model.addColumn("Judul");
+        model.addColumn("Genre");
+        model.addColumn("Durasi");
+        model.addColumn("Harga"); 
+        
+        try {
+            int no = 1;
+            String sql = "SELECT * FROM films"; 
+            
+            // Memanggil getKoneksi() sesuai dengan method di file Koneksi.java kamu
+            java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi(); 
+            java.sql.Statement stm = conn.createStatement();
+            java.sql.ResultSet res = stm.executeQuery(sql);
+            
+            while(res.next()){
+                model.addRow(new Object[]{
+                    no++, 
+                    res.getString("judul"), 
+                    res.getString("genre"), 
+                    res.getString("durasi"),
+                    res.getString("harga") 
+                });
+            }
+            jTable2.setModel(model); // Pastikan menggunakan jTable2 sesuai variabel GUI-mu
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
+        }
+    }
+    private void bersihkanForm() {
+        jTextField1.setText("");
+        jComboBox5.setSelectedIndex(0);
+        jComboBox6.setSelectedIndex(0);
+        jTextField2.setText("");
+    }
+    
+    private void loadFilmToComboBox() {
+    // 1. Bersihkan isi item bawaan/default combobox terlebih dahulu
+    jComboBox1.removeAllItems();
+    jComboBox2.removeAllItems();
+    jComboBox3.removeAllItems();
+    jComboBox4.removeAllItems();
+    
+    // 2. Tambahkan pilihan kosong atau petunjuk di baris pertama
+    jComboBox1.addItem("-- Pilih Film --");
+    jComboBox2.addItem("-- Pilih Film --");
+    jComboBox3.addItem("-- Pilih Film --");
+    jComboBox4.addItem("-- Pilih Film --");
+    
+    
+    try {
+        // Query untuk mengambil seluruh judul film dari database
+        String sql = "SELECT judul FROM films";
+        java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+        java.sql.Statement stm = conn.createStatement();
+        java.sql.ResultSet res = stm.executeQuery(sql);
+        
+        // 3. Lakukan perulangan untuk memasukkan judul film ke setiap combobox
+        while(res.next()) {
+            String judulFilm = res.getString("judul");
+            jComboBox1.addItem(judulFilm);
+            jComboBox2.addItem(judulFilm);
+            jComboBox3.addItem(judulFilm);
+            jComboBox4.addItem(judulFilm);
+        }
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat daftar film ke jadwal: " + e.getMessage());
+    }
+    }
+    
+    private void loadJadwalTerakhir() {
+    try {
+        // Query JOIN untuk mengambil judul film berdasarkan id_film yang terjadwal
+        String sql = "SELECT j.id_jadwal, f.judul_film FROM jadwal j LEFT JOIN films f ON j.id_film = f.id_film ORDER BY j.id_jadwal ASC";
+        java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+        java.sql.Statement stm = conn.createStatement();
+        java.sql.ResultSet res = stm.executeQuery(sql);
+
+        if (res.next()) {
+            String j1 = res.getString("judul_film");
+            jComboBox1.setSelectedItem(j1 == null ? "-- Pilih Film --" : j1);
+        }
+        if (res.next()) {
+            String j2 = res.getString("judul_film");
+            jComboBox2.setSelectedItem(j2 == null ? "-- Pilih Film --" : j2);
+        }
+        if (res.next()) {
+            String j3 = res.getString("judul_film");
+            jComboBox3.setSelectedItem(j3 == null ? "-- Pilih Film --" : j3);
+        }
+        if (res.next()) {
+            String j4 = res.getString("judul_film");
+            jComboBox4.setSelectedItem(j4 == null ? "-- Pilih Film --" : j4);
+        }
+
+    } catch (Exception e) {
+        System.out.println("Gagal memuat jadwal otomatis: " + e.getMessage());
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -30,20 +135,10 @@ public class Atmin extends javax.swing.JFrame {
 
         jFrame1 = new javax.swing.JFrame();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        panel1 = new java.awt.Panel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jComboBox3 = new javax.swing.JComboBox<>();
-        jComboBox4 = new javax.swing.JComboBox<>();
         panel2 = new java.awt.Panel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jComboBox5 = new javax.swing.JComboBox<>();
@@ -53,7 +148,18 @@ public class Atmin extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        panel1 = new java.awt.Panel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jComboBox3 = new javax.swing.JComboBox<>();
+        jComboBox4 = new javax.swing.JComboBox<>();
+        jButton5 = new javax.swing.JButton();
+        lblSambutan = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
 
@@ -70,75 +176,6 @@ public class Atmin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel3.setText("Sesi 1 (09:00 - 11:30) :");
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel4.setText("Sesi 2 (12:00 - 14:30) :");
-
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel5.setText("Sesi 3 (15:00 - 17:30) :");
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel6.setText("Sesi 4 (19:00 - 21:30) :");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
-        panel1.setLayout(panel1Layout);
-        panel1Layout.setHorizontalGroup(
-            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(18, 18, 18)
-                        .addComponent(jComboBox4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(522, Short.MAX_VALUE))
-        );
-        panel1Layout.setVerticalGroup(
-            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(50, 50, 50)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(50, 50, 50)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(50, 50, 50)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(221, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Kelola Jadwal", panel1);
-
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText(" Judul Film :");
 
@@ -148,36 +185,51 @@ public class Atmin extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel9.setText("Durasi Film :");
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel10.setText("Durasi Film :");
-
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel11.setText("Thumbnail :");
+        jLabel11.setText("Harga :");
 
-        jTextField1.setText("jTextField1");
+        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Genre", "Horror", "Action", "Slice Of life", "Romance", "Comedy" }));
 
-        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox6.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox6.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Durasi", "60", "120", "100" }));
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "No", "Judul", "Genre", "Durasi"
+                "No", "Judul", "Genre", "Durasi", "Harga"
             }
         ));
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable2);
 
         jButton2.setText("Edit");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Hapus");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Tambah");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -185,26 +237,27 @@ public class Atmin extends javax.swing.JFrame {
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(panel2Layout.createSequentialGroup()
-                            .addComponent(jLabel7)
-                            .addGap(18, 18, 18)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(panel2Layout.createSequentialGroup()
-                            .addComponent(jLabel8)
-                            .addGap(18, 18, 18)
-                            .addComponent(jComboBox5, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(panel2Layout.createSequentialGroup()
-                            .addComponent(jLabel9)
-                            .addGap(18, 18, 18)
-                            .addComponent(jComboBox6, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addComponent(jLabel10)
-                        .addComponent(jLabel11))
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel2Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel2Layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(18, 18, 18)
+                        .addComponent(jComboBox5, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addComponent(jButton4)
-                        .addGap(203, 203, 203)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 165, Short.MAX_VALUE)
+                        .addGap(203, 203, 203))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel2Layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel2Layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addGap(18, 18, 18)
+                        .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addComponent(jButton2)
@@ -226,15 +279,15 @@ public class Atmin extends javax.swing.JFrame {
                         .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
                             .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(32, 32, 32)
+                        .addGap(72, 72, 72)
                         .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9)
                             .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(32, 32, 32)
-                        .addComponent(jLabel10)
-                        .addGap(35, 35, 35)
-                        .addComponent(jLabel11)
-                        .addGap(36, 36, 36)
+                        .addGap(56, 56, 56)
+                        .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel11)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(74, 74, 74)
                         .addComponent(jButton4))
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
@@ -248,13 +301,98 @@ public class Atmin extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Kelola Film", panel2);
 
-        jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel1.setText("Halo, Admin <Name>");
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setText("Sesi 1 (09:00 - 11:30) :");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel4.setText("Sesi 2 (12:00 - 14:30) :");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setText("Sesi 3 (15:00 - 17:30) :");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setText("Sesi 4 (19:00 - 21:30) :");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jButton5.setText("Simpan");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        panel1.setLayout(panel1Layout);
+        panel1Layout.setHorizontalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton5)
+                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(panel1Layout.createSequentialGroup()
+                            .addComponent(jLabel3)
+                            .addGap(18, 18, 18)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(panel1Layout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addGap(18, 18, 18)
+                            .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(panel1Layout.createSequentialGroup()
+                            .addComponent(jLabel5)
+                            .addGap(18, 18, 18)
+                            .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(panel1Layout.createSequentialGroup()
+                            .addComponent(jLabel6)
+                            .addGap(18, 18, 18)
+                            .addComponent(jComboBox4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(502, Short.MAX_VALUE))
+        );
+        panel1Layout.setVerticalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(61, 61, 61)
+                .addComponent(jButton5)
+                .addContainerGap(137, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Kelola Jadwal", panel1);
+
+        lblSambutan.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        lblSambutan.setText("Halo, Admin <Name>");
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel2.setText("Date Time");
 
         jButton1.setText("Logout");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -266,22 +404,26 @@ public class Atmin extends javax.swing.JFrame {
                 .addGap(30, 30, 30))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(65, 65, 65))
-            .addComponent(jTabbedPane1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblSambutan, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2)
+                        .addGap(65, 65, 65))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTabbedPane1)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(lblSambutan, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                     .addComponent(jLabel2))
-                .addGap(20, 20, 20)
+                .addGap(25, 25, 25)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 532, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addContainerGap())
         );
@@ -289,6 +431,247 @@ public class Atmin extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        String judul = jTextField1.getText(); 
+    String genre = jComboBox5.getSelectedItem().toString(); 
+    String durasi = jComboBox6.getSelectedItem().toString();   
+    String harga = jTextField2.getText(); 
+
+    // Validasi sederhana agar inputan tidak kosong
+    if(judul.equals("") || genre.equals("") || durasi.equals("") || harga.equals("")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Semua data film wajib diisi!");
+        return;
+    }
+
+    try {
+        // Query SQL untuk memasukkan data ke tabel films
+        String sql = "INSERT INTO films (judul, genre, durasi, harga) VALUES (?, ?, ?, ?)";
+        java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        
+        pst.setString(1, judul);
+        pst.setString(2, genre);
+        pst.setString(3, durasi);
+        pst.setString(4, harga); 
+        
+        pst.execute();
+        javax.swing.JOptionPane.showMessageDialog(null, "Penyimpanan Data Film Berhasil!");
+        
+        // Memanggil kembali fungsi tabel agar data baru langsung muncul
+        tampilkanDataTabel(); 
+        loadFilmToComboBox();
+        
+        // Membersihkan kembali form inputan setelah berhasil menyimpan
+        jTextField1.setText("");
+        jComboBox5.setSelectedIndex(0);
+        jComboBox6.setSelectedIndex(0);
+        jTextField2.setText("");
+        
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan data: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        int baris = jTable2.rowAtPoint(evt.getPoint());
+    
+    // Kita ambil ID film atau Judul lama sebagai penanda utama dari tabel
+    // Karena jTable2 kamu hanya menampilkan No, Judul, Genre, Durasi, Harga:
+    // Kolom 1 adalah Judul
+    String judul = jTable2.getValueAt(baris, 1).toString();
+    String genre = jTable2.getValueAt(baris, 2).toString();
+    String durasi = jTable2.getValueAt(baris, 3).toString();
+    String harga = jTable2.getValueAt(baris, 4).toString();
+    
+    // Set data ke form input
+    jTextField1.setText(judul);
+    jComboBox5.setSelectedItem(genre);
+    jComboBox6.setSelectedItem(durasi);
+    jTextField2.setText(harga);
+    
+    // Simpan judul lama ini sebagai penanda unik untuk query WHERE nantinya
+    id_film_terpilih = judul;
+    }//GEN-LAST:event_jTable2MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       String judulBaru = jTextField1.getText(); 
+    String genre = jComboBox5.getSelectedItem().toString(); 
+    String durasi = jComboBox6.getSelectedItem().toString();   
+    String hargaText = jTextField2.getText(); 
+
+    if(judulBaru.equals("") || genre.equals("") || durasi.equals("") || hargaText.equals("")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Pilih data pada tabel terlebih dahulu dan lengkapi inputan!");
+        return;
+    }
+
+    try {
+        // Query baru: Mengupdate semua kolom termasuk judul dan harga
+        String sql = "UPDATE films SET judul=?, genre=?, durasi=?, harga=? WHERE judul=?";
+        java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        
+        pst.setString(1, judulBaru);
+        pst.setString(2, genre);
+        pst.setString(3, durasi);
+        
+        // Mengonversi harga ke Integer/Int jika tipe data di MySQL kamu adalah angka (INT)
+        // Ini menyembuhkan masalah harga yang tidak mau keubah
+        int hargaInt = Integer.parseInt(hargaText);
+        pst.setInt(4, hargaInt); 
+        
+        // WHERE menggunakan judul asli sebelum diganti yang tersimpan saat tabel diklik
+        pst.setString(5, id_film_terpilih); 
+        
+        pst.execute();
+        javax.swing.JOptionPane.showMessageDialog(null, "Perubahan Data Film Berhasil!");
+        
+        tampilkanDataTabel(); // Refresh tabel
+        bersihkanForm();  // Reset form jadi kosong kembali
+        loadFilmToComboBox();
+        id_film_terpilih = ""; // Kosongkan kembali variabel penanda
+        
+    } catch (NumberFormatException nfe) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Kolom Harga harus berupa angka saja!");
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal mengubah data: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        String judul = jTextField1.getText();
+
+    if(judul.equals("")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Pilih data pada tabel terlebih dahulu yang ingin dihapus!");
+        return;
+    }
+
+    // Menambahkan konfirmasi sebelum menghapus data
+    int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus film '" + judul + "'?", "Konfirmasi Hapus", javax.swing.JOptionPane.YES_NO_OPTION);
+    
+    if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+        try {
+            // Query menghapus data film berdasarkan judul
+            String sql = "DELETE FROM films WHERE judul=?";
+            java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+            java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+            
+            pst.setString(1, judul);
+            pst.execute();
+            
+            javax.swing.JOptionPane.showMessageDialog(null, "Data Film Berhasil Dihapus!");
+            
+            tampilkanDataTabel(); // Refresh tabel
+            bersihkanForm();  // Reset inputan
+            loadFilmToComboBox();
+            
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus data: " + e.getMessage());
+        }
+    }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // 1. Ambil teks judul film dari ComboBox
+    String judul1 = jComboBox1.getSelectedItem().toString();
+    String judul2 = jComboBox2.getSelectedItem().toString();
+    String judul3 = jComboBox3.getSelectedItem().toString();
+    String judul4 = jComboBox4.getSelectedItem().toString();
+
+    // 2. Konversi judul film menjadi ID Film (Integer) menggunakan fungsi pembantu
+    Integer idFilm1 = ambilIdFilmDariJudul(judul1);
+    Integer idFilm2 = ambilIdFilmDariJudul(judul2);
+    Integer idFilm3 = ambilIdFilmDariJudul(judul3);
+    Integer idFilm4 = ambilIdFilmDariJudul(judul4);
+
+    try {
+        java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+        String sql = "UPDATE jadwal SET id_film=? WHERE id_jadwal=?";
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        
+        // --- UPDATE SESI 1 (id_jadwal = 1) ---
+        if (idFilm1 == null) {
+            pst.setNull(1, java.sql.Types.INTEGER);
+        } else {
+            pst.setInt(1, idFilm1);
+        }
+        pst.setInt(2, 1);
+        pst.addBatch();
+        
+        // --- UPDATE SESI 2 (id_jadwal = 2) ---
+        if (idFilm2 == null) {
+            pst.setNull(1, java.sql.Types.INTEGER);
+        } else {
+            pst.setInt(1, idFilm2);
+        }
+        pst.setInt(2, 2);
+        pst.addBatch();
+        
+        // --- UPDATE SESI 3 (id_jadwal = 3) ---
+        if (idFilm3 == null) {
+            pst.setNull(1, java.sql.Types.INTEGER);
+        } else {
+            pst.setInt(1, idFilm3);
+        }
+        pst.setInt(2, 3);
+        pst.addBatch();
+        
+        // --- UPDATE SESI 4 (id_jadwal = 4) ---
+        if (idFilm4 == null) {
+            pst.setNull(1, java.sql.Types.INTEGER);
+        } else {
+            pst.setInt(1, idFilm4);
+        }
+        pst.setInt(2, 4);
+        pst.addBatch();
+        
+        // Eksekusi Batch Update
+        pst.executeBatch();
+        
+        javax.swing.JOptionPane.showMessageDialog(null, "Jadwal Film Bioskop Berhasil Diperbarui!");
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan jadwal: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // 1. Tampilkan konfirmasi pilihan apakah yakin ingin logout
+    int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+        this, 
+        "Apakah Anda yakin ingin keluar dari sistem?", 
+        "Konfirmasi Logout", 
+        javax.swing.JOptionPane.YES_NO_OPTION,
+        javax.swing.JOptionPane.QUESTION_MESSAGE
+    );
+    
+    // 2. Jika admin memilih 'YES' (Ya)
+    if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+        // Buka kembali halaman Login (sesuaikan nama class Login milikmu jika berbeda)
+        new Login().setVisible(true); 
+        
+        // Tutup halaman Admin yang sedang aktif saat ini
+        this.dispose(); 
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
+    private Integer ambilIdFilmDariJudul(String judulFilm) {
+        if (judulFilm == null || judulFilm.equals("-- Pilih Film --") || judulFilm.equals("Item 1")) {
+            return null;
+        }
+        try {
+            // CATATAN: Pastikan kolom 'judul_film' sesuai dengan nama kolom di tabel films kamu
+            String sql = "SELECT id_film FROM films WHERE judul_film = ?"; 
+            java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+            java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, judulFilm);
+            java.sql.ResultSet res = pst.executeQuery();
+        if (res.next()) {
+            return res.getInt("id_film");
+        }
+        } catch (Exception e) {
+            System.out.println("Gagal mencari ID Film: " + e.getMessage());
+        }
+        return null; // KUNCI PERBAIKAN: Harus ada return null di paling luar agar tanda merah hilang!
+    }
     /**
      * @param args the command line arguments
      */
@@ -322,6 +705,9 @@ public class Atmin extends javax.swing.JFrame {
                 new Atmin().setVisible(true);
             }
         });
+        
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -329,6 +715,7 @@ public class Atmin extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;
@@ -336,8 +723,6 @@ public class Atmin extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBox5;
     private javax.swing.JComboBox<String> jComboBox6;
     private javax.swing.JFrame jFrame1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -351,6 +736,8 @@ public class Atmin extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel lblSambutan;
     private java.awt.Panel panel1;
     private java.awt.Panel panel2;
     // End of variables declaration//GEN-END:variables

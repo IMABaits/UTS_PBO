@@ -10,13 +10,50 @@ package com.mycompany.tubess;
  * @author ASUS Vivobook
  */
 public class Administrator extends javax.swing.JFrame {
-
+String id_user_terpilih = "";
     /**
      * Creates new form Administrator
      */
     public Administrator() {
         initComponents();
+        tampilkanDataUser();
+        
+        
     }
+    private void tampilkanDataUser() {
+    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel();
+    model.addColumn("Id");
+    model.addColumn("Username");
+    model.addColumn("Level");
+    model.addColumn("Email");
+    
+    try {
+        String sql = "SELECT id_user, username, level, email FROM users ORDER BY id_user DESC";
+        java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+        java.sql.Statement stm = conn.createStatement();
+        java.sql.ResultSet res = stm.executeQuery(sql);
+        
+        while(res.next()){
+            model.addRow(new Object[]{
+                res.getString("id_user"),
+                res.getString("username"),
+                res.getString("level"),
+                res.getString("email")
+            });
+        }
+        tblUser.setModel(model);
+    } catch (Exception e) {
+        System.out.println("Gagal memuat data user: " + e.getMessage());
+    }
+}
+
+private void bersihkanFormUser() {
+    txtUsername.setText("");
+    cmbLevel.setSelectedIndex(0);
+    txtEmail.setText("");
+    txtPassword.setText("");
+    id_user_terpilih = "";
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,14 +71,16 @@ public class Administrator extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        txtUsername = new javax.swing.JTextField();
+        cmbLevel = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblUser = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        txtEmail = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        txtPassword = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -59,16 +98,11 @@ public class Administrator extends javax.swing.JFrame {
         jLabel4.setText("Level :");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel5.setText(" Username :");
+        jLabel5.setText("Email :");
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel6.setText(" Username :");
+        cmbLevel.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Pilih Level--", "Admin", "User", " " }));
 
-        jTextField1.setText("jTextField1");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -76,16 +110,39 @@ public class Administrator extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "No", "Username", "Level", "Title 4"
+                "Id", "Username", "Level", "Email"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        tblUser.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblUserMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblUser);
 
         jButton2.setText("Tambah");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Edit");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Hapus");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setText("Password :");
 
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
@@ -94,18 +151,21 @@ public class Administrator extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jButton2))
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel4))
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
                         .addGap(18, 18, 18)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jButton2)
-                        .addComponent(jLabel6)))
+                            .addComponent(txtUsername, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                            .addComponent(cmbLevel, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtEmail)
+                            .addComponent(txtPassword))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 226, Short.MAX_VALUE)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel1Layout.createSequentialGroup()
@@ -123,21 +183,23 @@ public class Administrator extends javax.swing.JFrame {
                         .addGap(44, 44, 44)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(41, 41, 41)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cmbLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(41, 41, 41)
-                        .addComponent(jLabel5)
-                        .addGap(44, 44, 44)
-                        .addComponent(jLabel6)
-                        .addGap(42, 42, 42)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(41, 41, 41)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(97, 97, 97)
                         .addComponent(jButton2))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(37, 37, 37)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
                     .addComponent(jButton4))
@@ -147,6 +209,11 @@ public class Administrator extends javax.swing.JFrame {
         jTabbedPane1.addTab("Tambah User", panel1);
 
         jButton1.setText("LogOut");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -180,6 +247,157 @@ public class Administrator extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // 1. Tampilkan konfirmasi pilihan apakah yakin ingin logout
+    int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+        this, 
+        "Apakah Anda yakin ingin keluar dari sistem?", 
+        "Konfirmasi Logout", 
+        javax.swing.JOptionPane.YES_NO_OPTION,
+        javax.swing.JOptionPane.QUESTION_MESSAGE
+    );
+    
+    // 2. Jika admin memilih 'YES' (Ya)
+    if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+        // Buka kembali halaman Login (sesuaikan nama class Login milikmu jika berbeda)
+        new Login().setVisible(true); 
+        
+        // Tutup halaman Admin yang sedang aktif saat ini
+        this.dispose(); 
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUserMouseClicked
+        int baris = tblUser.rowAtPoint(evt.getPoint());
+    
+    id_user_terpilih = tblUser.getValueAt(baris, 0).toString();
+    String username = tblUser.getValueAt(baris, 1).toString();
+    String level = tblUser.getValueAt(baris, 2).toString();
+    String email = tblUser.getValueAt(baris, 3).toString();
+    
+    txtUsername.setText(username);
+    cmbLevel.setSelectedItem(level);
+    txtEmail.setText(email);
+    txtPassword.setText("");
+    }//GEN-LAST:event_tblUserMouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        String username = txtUsername.getText();
+    String level = cmbLevel.getSelectedItem().toString();
+    String email = txtEmail.getText();
+    String password = txtPassword.getText(); // Ambil inputan password baru
+    
+    // Validasi agar semua field wajib diisi saat tambah user baru
+    if(username.equals("") || email.equals("") || password.equals("")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Semua data termasuk Password wajib diisi!");
+        return;
+    }
+    
+    try {
+        // Query dinamis menangkap 4 parameter inputan
+        String sql = "INSERT INTO users (username, level, email, password) VALUES (?, ?, ?, ?)";
+        java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        
+        pst.setString(1, username);
+        pst.setString(2, level);
+        pst.setString(3, email);
+        pst.setString(4, password); // Masukkan password ke database
+        
+        pst.execute();
+        javax.swing.JOptionPane.showMessageDialog(null, "User baru berhasil ditambahkan!");
+        tampilkanDataUser();
+        bersihkanFormUser();
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menambah user: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if(id_user_terpilih.equals("")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Pilih data user pada tabel terlebih dahulu!");
+        return;
+    }
+    
+    String username = txtUsername.getText();
+    String level = cmbLevel.getSelectedItem().toString();
+    String email = txtEmail.getText();
+    String password = txtPassword.getText(); // Ambil inputan password
+    
+    try {
+        java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+        java.sql.PreparedStatement pst;
+        
+        // Logika: Apakah admin ikut mengubah password atau tidak?
+        if (password.equals("")) {
+            // Jika password kosong, update field selain password
+            String sql = "UPDATE users SET username=?, level=?, email=? WHERE id_user=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, username);
+            pst.setString(2, level);
+            pst.setString(3, email);
+            pst.setString(4, id_user_terpilih);
+        } else {
+            // Jika password diisi, update seluruh data termasuk password baru
+            String sql = "UPDATE users SET username=?, level=?, email=?, password=? WHERE id_user=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, username);
+            pst.setString(2, level);
+            pst.setString(3, email);
+            pst.setString(4, password);
+            pst.setString(5, id_user_terpilih);
+        }
+        
+        pst.execute();
+        javax.swing.JOptionPane.showMessageDialog(null, "Data user berhasil diperbarui!");
+        tampilkanDataUser();
+        bersihkanFormUser();
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal mengubah data: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // 1. Validasi apakah admin sudah memilih baris data di tabel atau belum
+    if(id_user_terpilih.equals("")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Pilih data user pada tabel terlebih dahulu!");
+        return;
+    }
+    
+    // 2. Tampilkan pop-up konfirmasi biar tidak sengaja terhapus
+    int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+        this, 
+        "Apakah Anda yakin ingin menghapus user dengan ID " + id_user_terpilih + "?", 
+        "Konfirmasi Hapus", 
+        javax.swing.JOptionPane.YES_NO_OPTION,
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    
+    // 3. Jika admin menekan pilihan 'YES'
+    if(konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+        try {
+            // Query SQL untuk menghapus data berdasarkan id_user
+            String sql = "DELETE FROM users WHERE id_user=?";
+            java.sql.Connection conn = (java.sql.Connection)Koneksi.getKoneksi();
+            java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, id_user_terpilih);
+            
+            // Eksekusi perintah ke database
+            pst.execute();
+            
+            // Tampilkan pesan sukses
+            javax.swing.JOptionPane.showMessageDialog(null, "User berhasil dihapus dari sistem!");
+            
+            // Refresh tabel dan kosongkan kembali semua form input (termasuk password)
+            tampilkanDataUser();
+            bersihkanFormUser();
+            
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus user: " + e.getMessage());
+        }
+    }
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -217,11 +435,11 @@ public class Administrator extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cmbLevel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -230,8 +448,10 @@ public class Administrator extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private java.awt.Panel panel1;
+    private javax.swing.JTable tblUser;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JTextField txtPassword;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }
