@@ -12,7 +12,7 @@ package com.mycompany.tubess;
 public class Pelanggan extends javax.swing.JFrame {
 
     /**
-     * Creates new form Atmin
+     * Creates new form Admin
      */
     public Pelanggan() {
         initComponents();
@@ -37,7 +37,6 @@ public class Pelanggan extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         panel4 = new java.awt.Panel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
@@ -107,8 +106,8 @@ public class Pelanggan extends javax.swing.JFrame {
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel3Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(227, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 653, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         panel3Layout.setVerticalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,15 +130,17 @@ public class Pelanggan extends javax.swing.JFrame {
             .addGap(0, 508, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Ticket", panel4);
+        jTabbedPane1.addTab("Tiket", panel4);
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel1.setText("Halo,  <Name>");
+        jLabel1.setText("Halo, Selamat Datang di CineMate!");
 
-        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel2.setText("Date Time");
-
-        jButton1.setText("LogOut");
+        jButton1.setText("Logout");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -150,9 +151,7 @@ public class Pelanggan extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addGap(65, 65, 65))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1)
@@ -163,9 +162,7 @@ public class Pelanggan extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                    .addComponent(jLabel2))
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                 .addGap(21, 21, 21)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -175,6 +172,26 @@ public class Pelanggan extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // 1. Tampilkan konfirmasi pilihan apakah yakin ingin logout
+    int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+        this, 
+        "Apakah Anda yakin ingin keluar dari sistem CineMate?", 
+        "Konfirmasi Logout", 
+        javax.swing.JOptionPane.YES_NO_OPTION,
+        javax.swing.JOptionPane.QUESTION_MESSAGE
+    );
+    
+    // 2. Jika user/pelanggan memilih 'YES' (Ya)
+    if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+        // Membuka kembali halaman Login
+        new Login().setVisible(true); 
+        
+        // Menutup halaman Pelanggan yang sedang aktif saat ini
+        this.dispose(); 
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -218,7 +235,6 @@ public class Pelanggan extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
